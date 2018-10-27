@@ -656,10 +656,18 @@ snapshot_backup() {
     fi
     hook "${hook_end}" "backup" "${root}" "${snapshot_full_path}" "${backups_dst}" "${rvalue}"
     hook_rvalue=$?
+    # Snapshot umount for backup!
+    ${fs}_snapshot_umount "${root}" "${snapshot_path}" "${snapshot_name}"
+    rvalue=$?
     if [ "${hook_rvalue}" -ne "0" ]
     then
         error_log "Stopping execution, hook failed!"  ${hook_rvalue}
         return ${hook_rvalue}
+    fi
+    if [ "${rvalue}" -ne "0" ]
+    then
+        error_log "Could not umount snapshot in '${snapshot_full_path}' to finish backup" ${rvalue}
+        return ${rvalue}
     fi
     return ${rvalue}
 }
@@ -1396,6 +1404,16 @@ btrfs_snapshot_mount() {
 }
 
 
+btrfs_snapshot_umount() {
+    local root="${1}"
+    local snapshot_path="${2}"
+    local snapshot_name="${3}"
+
+    # Not needed in btrfs
+    return 0
+}
+
+
 btrfs_snapshot_restore() {
     local root="${1}"
     local snapshot_dir="${2}"
@@ -1406,16 +1424,26 @@ btrfs_snapshot_restore() {
     (
         set -e
         rvalue=0
+        volume=''
+        if mountpoint -q "${root}"
+        then
+            volume="${root}"
+        else
+            device=$(findmnt -k -l -n -t btrfs -o source --target ${root})
+            subvolumeid=$(${BTRFS} subvolume show "${root}" | awk -v IGNORECASE=1 '/Subvolume ID/{ print $3 }')
+            volume=$(findmnt -k -l -n -t btrfs -S "${device}" | awk -v volid="subvolid=${subvolumeid}" '{ if ($4 ~ volid) print $1 }')
+            [ -z "${volume}" ] && echo_log "Unable to determine root subvolume for ${root}"
+        fi
         if [ "${keep_orig}" -eq "1" ]
         then
-            cmd="tar -zcvf ${root}.backup-$(date +'%y.%m.%d-%w-%s').tgz ${root}"
+            cmd="tar --exclude -zcvf ${root}.backup-$(date +'%y.%m.%d-%w-%s').tgz ${root}"
             echo_log "RUN: ${cmd}"
             ${cmd} 2>&1 | pipe_log
             rvalue=${PIPESTATUS[0]}
         fi
         if [ "${rvalue}" -eq "0" ]
         then
-            cmd="mv -v ${root} ${root}.respaldo"
+            cmd="mv -v ${root} ${root}.betterclone"
             echo_log "RUN: ${cmd}"
             ${cmd} 2>&1 | pipe_log
             rvalue=${PIPESTATUS[0]}
@@ -1425,15 +1453,15 @@ btrfs_snapshot_restore() {
             ${cmd} 2>&1 | pipe_log
             rvalue=${PIPESTATUS[0]}
             [ "${rvalue}" -ne "0" ] && exit ${rvalue}
-            if mountpoint -q "${root}"
+            if [ -n "${volume}" ]
             then
-                cmd="umount ${root} && mount ${root}"
+                cmd="umount ${volume} && mount ${volume}"
                 echo_log "RUN: ${cmd}"
                 ${cmd} 2>&1 | pipe_log
                 rvalue=${PIPESTATUS[0]}
                 [ "${rvalue}" -ne "0" ] && exit ${rvalue}
             fi
-            cmd="${BTRFS} subvolume delete ${root}.respaldo"
+            cmd="${BTRFS} subvolume delete ${root}.betterclone"
             echo_log "RUN: ${cmd}"
             ${cmd} 2>&1 | pipe_log
             exit ${PIPESTATUS[0]}
