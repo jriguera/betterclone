@@ -1130,7 +1130,8 @@ run() {
         error_log "Mountpoint to operate not found or specified!" 1000
         return 1000
     fi
-    if [ ! "$(id -u)" == "0" ]; then
+    if [ ! "$(id -u)" == "0" ]
+    then
         error_log "Program not running as root" 1001
         return 1001
     fi
