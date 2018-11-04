@@ -7,14 +7,14 @@ Before=docker.service docker-compose.target
 Conflicts=shutdown.target betterclone-backup@%i.service
 ConditionPathExists=/%I/.backup.betterclone
 ConditionPathExists=/%I/.restore.betterclone
-ConditionFileIsExecutable=/usr/local/bin/betterclone.sh
+ConditionFileIsExecutable=/bin/betterclone
 
 [Service]
 Type=oneshot
 User=root
 WorkingDirectory=/tmp
 EnvironmentFile=/etc/betterclone/config.env
-ExecStart=/usr/local/bin/betterclone.sh restore /%I nokooks
+ExecStart=/bin/betterclone restore /%I nokooks
 
 [Install]
 WantedBy=multi-user.target betterclone-restore.target

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
 export PREFIX="$(pwd)"
-sudo PREFIX="${PREFIX}" "${PREFIX}/bin/betterclone.sh" "${@}"
+sudo PREFIX="${PREFIX}" "${PREFIX}/bin/betterclone" "${@}"
 

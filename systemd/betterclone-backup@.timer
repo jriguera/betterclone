@@ -3,7 +3,7 @@ Description=Timer to run betterclone on /%I
 Wants=network-online.target
 After=network.target network-online.target
 ConditionPathExists=/%I/.backup.betterclone
-ConditionFileIsExecutable=/usr/local/bin/betterclone.sh
+ConditionFileIsExecutable=/bin/betterclone
 
 [Timer]
 Persistent=false

@@ -5,14 +5,14 @@ Wants=network-online.target
 After=network.target network-online.target
 Conflicts=shutdown.target betterclone-restore@%i.service
 ConditionPathExists=/%I/.backup.betterclone
-ConditionFileIsExecutable=/usr/local/bin/betterclone.sh
+ConditionFileIsExecutable=/bin/betterclone
 
 [Service]
 Type=oneshot
 User=root
 WorkingDirectory=/tmp
 EnvironmentFile=/etc/betterclone/config.env
-ExecStart=/usr/local/bin/betterclone.sh backup /%I
+ExecStart=/bin/betterclone backup /%I
 
 [Install]
 WantedBy=multi-user.target betterclone-backup.target
