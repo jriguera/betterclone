@@ -15,14 +15,17 @@ else
   PROGRAM_LOGDIR="${PROGRAM_LOGDIR:-${PREFIX}/log}"
   PROGRAM_CFGD="${PROGRAM_CFGD:-${PREFIX}/etc}"
 fi
+[ -d "${PROGRAM_LOGDIR}" ] || mkdir "${PROGRAM_LOGDIR}"
 PROGRAM_LOG="${PROGRAM_LOG:-$PROGRAM_LOGDIR/betterclone-$$.log}"
-source "${PROGRAM_CFGD}/config.env"
 
 BACKUP_CFG="${BACKUP_CFG:-.backup.betterclone}"
 RESTORE_CFG="${RESTORE_CFG:-.restore.betterclone}"
 BACKUP_LOCK="${BACKUP_LOCK:-.betterclone.lock}"
 BACKUP_TOOL_DEFAULT=${RCLONE}
 BACKUP_TOOL_DEFAULT_CFG="${PROGRAM_CFGD}/rclone.conf"
+
+# Load configuration
+source "${PROGRAM_CFGD}/config.env"
 
 # DO NOT CHANGE!!!!! Policy is based on this format, it will not work with
 # a different format
@@ -53,6 +56,7 @@ Options:
 
 Commands
     init    Initialize default backup settings for the provided mountpoint
+    list    List current snapshots and backups
     help    Show this help message
     backup  Perform a backup on the mountpoint.
             Options: force, nohooks, skip-hooks-snapshot, skip-hooks-backup
