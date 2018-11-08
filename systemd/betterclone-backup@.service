@@ -16,4 +16,3 @@ ExecStart=/bin/betterclone backup /%I
 
 [Install]
 WantedBy=multi-user.target betterclone-backup.target
-Also=betterclone-backup@%i.timer
