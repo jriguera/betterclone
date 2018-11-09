@@ -2,7 +2,7 @@
 Description=Backup on /%I with betterclone
 StopWhenUnneeded=true
 Wants=network-online.target
-After=network.target network-online.target
+After=network.target network-online.target betterclone-restore.target
 Conflicts=shutdown.target betterclone-restore@%i.service
 ConditionPathExists=/%I/.backup.betterclone
 ConditionFileIsExecutable=/bin/betterclone

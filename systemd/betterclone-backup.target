@@ -2,7 +2,7 @@
 Description=Betterclone Backup target services
 StopWhenUnneeded=true
 Wants=network-online.target
-After=network.target network-online.target
+After=network.target network-online.target betterclone-restore.target
 Conflicts=shutdown.target
 ConditionFileIsExecutable=/bin/betterclone
 ConditionPathExists=/etc/betterclone/config.env
