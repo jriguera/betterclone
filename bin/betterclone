@@ -1365,13 +1365,13 @@ btrfs_snapshot_list() {
     local output="${3}"
 
     local cmd
-    # get the longest common path
-    local lcpath=$(echo -e "${root}\n${snapshot_path}" | sed -e 's|$|/|;1{h;d;}' -e 'G;s|\(.*/\).*\n\1.*|\1|;h;$!d;s|/$||')
+    local fstree
     (
         set -e
+        fstree=$(stat -c '%m' "${snapshot_path}")
         cmd="${BTRFS} subvolume list -t -a -r --sort=-gen ${root}"
         echo_log "RUN: ${cmd}"
-        ${cmd} | awk -v cm="${lcpath}" -v s="${snapshot_path}" 'NR > 2 { sub("<FS_TREE>",cm,$4); regex="^"s; if ($4 ~ regex) { n=split($4,a,"/"); print a[n]; } }' >"${output}" 2> >(pipe_log)
+        ${cmd} | awk -v cm="${fstree}" -v s="${snapshot_path}" 'NR > 2 { sub("<FS_TREE>",cm,$4); regex="^"s; if ($4 ~ regex) { n=split($4,a,"/"); print a[n]; } }' >"${output}" 2> >(pipe_log)
         exit ${PIPESTATUS[0]}
     ) &
     wait $!
