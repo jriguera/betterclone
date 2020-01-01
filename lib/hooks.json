@@ -1,0 +1,184 @@
+[
+  {
+    "id": "list",
+    "execute-command": "{{ getenv "RUN" | js }}",
+    "command-working-directory": "/tmp",
+    "include-command-output-in-response": true,
+    "include-command-output-in-response-on-error": true,
+    "pass-arguments-to-command":
+    [
+      {
+        "source": "string",
+        "name": "list"
+      },
+      {
+        "source": "url",
+        "name": "mountpoint"
+      }
+    ],
+    "trigger-rule":
+    {
+      "match":
+      {
+        "type": "value",
+        "value": "{{ getenv "TOKEN" | js }}",
+        "parameter":
+        {
+          "source": "header",
+          "name": "X-Betterclone-Token"
+        }
+      }
+    }
+  },
+  {
+    "id": "backup",
+    "execute-command": "{{ getenv "RUN" | js }}",
+    "command-working-directory": "/tmp",
+    "include-command-output-in-response": true,
+    "include-command-output-in-response-on-error": true,
+    "pass-arguments-to-command":
+    [
+      {
+        "source": "string",
+        "name": "backup"
+      },
+      {
+        "source": "url",
+        "name": "mountpoint"
+      }
+    ],
+    "trigger-rule":
+    {
+      "match":
+      {
+        "type": "value",
+        "value": "{{ getenv "TOKEN" | js }}",
+        "parameter":
+        {
+          "source": "header",
+          "name": "X-Betterclone-Token"
+        }
+      }
+    }
+  },
+  {
+    "id": "restore",
+    "execute-command": "{{ getenv "RUN" | js }}",
+    "command-working-directory": "/tmp",
+    "include-command-output-in-response": true,
+    "include-command-output-in-response-on-error": true,
+    "pass-arguments-to-command":
+    [
+      {
+        "source": "string",
+        "name": "restore"
+      },
+      {
+        "source": "url",
+        "name": "mountpoint"
+      }
+    ],
+    "trigger-rule":
+    {
+      "match":
+      {
+        "type": "value",
+        "value": "{{ getenv "TOKEN" | js }}",
+        "parameter":
+        {
+          "source": "header",
+          "name": "X-Betterclone-Token"
+        }
+      }
+    }
+  },
+  {
+    "id": "show",
+    "execute-command": "{{ getenv "RUN" | js }}",
+    "command-working-directory": "/tmp",
+    "include-command-output-in-response": true,
+    "include-command-output-in-response-on-error": true,
+    "pass-arguments-to-command":
+    [
+      {
+        "source": "string",
+        "name": "show"
+      },
+      {
+        "source": "url",
+        "name": "pid"
+      }
+    ],
+    "trigger-rule":
+    {
+      "match":
+      {
+        "type": "value",
+        "value": "{{ getenv "TOKEN" | js }}",
+        "parameter":
+        {
+          "source": "header",
+          "name": "X-Betterclone-Token"
+        }
+      }
+    }
+  },
+  {
+    "id": "status",
+    "execute-command": "{{ getenv "RUN" | js }}",
+    "command-working-directory": "/tmp",
+    "include-command-output-in-response": true,
+    "include-command-output-in-response-on-error": true,
+    "pass-arguments-to-command":
+    [
+      {
+        "source": "string",
+        "name": "status"
+      },
+      {
+        "source": "url",
+        "name": "pid"
+      }
+    ],
+    "trigger-rule":
+    {
+      "match":
+      {
+        "type": "value",
+        "value": "{{ getenv "TOKEN" | js }}",
+        "parameter":
+        {
+          "source": "header",
+          "name": "X-Betterclone-Token"
+        }
+      }
+    }
+  },
+  {
+    "id": "",
+    "execute-command": "{{ getenv "RUN" | js }}",
+    "command-working-directory": "/tmp",
+    "include-command-output-in-response": true,
+    "include-command-output-in-response-on-error": true,
+    "pass-arguments-to-command":
+    [
+      {
+        "source": "index",
+        "name": "status"
+      }
+    ],
+    "trigger-rule":
+    {
+      "match":
+      {
+        "type": "value",
+        "value": "{{ getenv "TOKEN" | js }}",
+        "parameter":
+        {
+          "source": "header",
+          "name": "X-Betterclone-Token"
+        }
+      }
+    }
+  }
+]
