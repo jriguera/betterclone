@@ -1,0 +1,34 @@
+#!/usr/bin/make -f
+
+# output every command that modifies files on the build system.
+#export DH_VERBOSE = 1
+
+VERSION := $(shell dpkg-parsechangelog | egrep '^Version:' | cut -f 2 -d ' ')
+BUILD := $(shell git rev-parse --short HEAD)
+
+%:
+	dh $@
+
+.PHONY: override_dh_auto_configure \
+	override_dh_strip \
+	override_dh_auto_build \
+	override_dh_auto_install \
+	override_dh_installsystemd \
+	override_dh_auto_test
+
+override_dh_auto_configure:
+
+override_dh_strip:
+
+override_dh_auto_build:
+
+override_dh_auto_test:
+
+override_dh_auto_install:
+	@install -m 755 -g root -o root -D bin/betterclone debian/betterclone/bin/betterclone
+	@install -m 755 -g root -o root -d debian/betterclone/lib/systemd/system/
+	@install -m 644 -g root -o root systemd/* debian/betterclone/lib/systemd/system/
+
+override_dh_installsystemd:
+	dh_installsystemd --name=betterclone-restore
+	dh_installsystemd --name=betterclone-backup
