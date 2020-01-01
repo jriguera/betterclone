@@ -4,9 +4,11 @@ debian/*.debhelper
 debian/*.debhelper.log
 debian/*.log
 debian/*.substvars
+deb/
 deb/*.deb
 deb/*.dsc
 deb/*.build
 deb/*.buildinfo
 deb/*.changes
 deb/*.tar.gz
+log/
