@@ -26,6 +26,7 @@ override_dh_auto_test:
 
 override_dh_auto_install:
 	@install -m 755 -g root -o root -D bin/betterclone debian/betterclone/bin/betterclone
+	@install -m 755 -g root -o root -D etc/config.env  debian/betterclone/etc/betterclone/config.env
 	@install -m 755 -g root -o root -d debian/betterclone/lib/systemd/system/
 	@install -m 644 -g root -o root systemd/* debian/betterclone/lib/systemd/system/
 
