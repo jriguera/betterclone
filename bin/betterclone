@@ -73,7 +73,7 @@ backups, so be aware all copies are "full" backups.
 
 Because of the usage of filesystem tools, this program needs to run as root.
 
-(c) Jose Riguera Lopez 2018 <jriguera@gmail.com>
+(c) Jose Riguera Lopez 2020 <jriguera@gmail.com>
 
 EOF
 }
