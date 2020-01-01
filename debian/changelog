@@ -1,3 +1,34 @@
+betterclone (0.2.0) unstable; urgency=low
+  * fix
+  * include readme in debian package
+  * license
+  * scripts for release versions
+  * version file for deb packaging
+  * update year
+  * add documentation
+  * remove conffiles
+  * delete run.sh
+  * extra ignore
+  * debian packaging
+  * fix btrfs list snpashots
+  * Improve systemd dependencies
+  * Remove dependency
+  * Example config file
+  * Fix log folder creation
+  * Fix timer syntax
+  * rename betterclone.sh to betterclone
+  * fix style
+  * Fix recover mount/umount subvolume
+  * Merge branch 'master' of github.com:jriguera/betterclone
+  * Added systemd units
+  * added run
+  * Default config
+  * Added backup script
+  * Delete README.md
+  * Initial commit
+
+ -- Jose Riguera <jriguera@gmail.com>  Wed, 1 Jan 2020 22:18:42 +0100
+
 betterclone (0.1.0) unstable; urgency=low
   * Debian package
 
