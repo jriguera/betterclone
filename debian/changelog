@@ -1,3 +1,10 @@
+betterclone (0.2.1) unstable; urgency=low
+  * minor version bump
+  * make sure snapshots_path is there
+  * include debian files
+
+ -- Jose Riguera <jriguera@gmail.com>  Wed, 1 Jan 2020 22:20:50 +0100
+
 betterclone (0.2.0) unstable; urgency=low
   * fix
   * include readme in debian package
