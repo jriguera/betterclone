@@ -164,6 +164,7 @@ check_cfg() {
 
     local rvalue
     local p
+    local snapshots_path
 
     if [ ! -r "${cfg}" ]
     then
@@ -195,9 +196,9 @@ check_cfg() {
         error_log "${root} filesystem ${fs} is not supported by this program!" 1012
         return 1012
     fi
-    p=$(read_cfg_param "${cfg}" SNAPSHOTS_PATH)
+    snapshots_path=$(read_cfg_param "${cfg}" SNAPSHOTS_PATH)
     rvalue=$?
-    if [ "${rvalue}" -ne "0" ] || [ -z "${p}" ]
+    if [ "${rvalue}" -ne "0" ] || [ -z "${snapshots_path}" ]
     then
         error_log "SNAPSHOTS_PATH not defined in configuration file '${cfg}'" 1006
         return 1006
@@ -215,6 +216,7 @@ check_cfg() {
         error_log "BACKUPS_TOOL not defined in configuration file '${cfg}'" 1006
         return 1006
     fi
+    mkdir -p "${snapshots_path}"
     return 0
 }
 
