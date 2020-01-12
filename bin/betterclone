@@ -1136,12 +1136,15 @@ run() {
         error_log "Mountpoint to operate not found or specified!" 1000
         return 1000
     fi
-    if [ ! "$(id -u)" == "0" ]
+    if [ "$(id -u)" != "0" ]
     then
         error_log "Program not running as root" 1001
         return 1001
     fi
-    if [ -r "${lock}" ]
+
+    # Set lock and write pid to it
+    exec 222<>"${lock}"
+    if ! flock -n -x 222
     then
         echo_log "Wait, wait ... It seems there is a lock file '${lock}'. Checking ..."
         pid=$(cat "${lock}")
@@ -1154,19 +1157,23 @@ run() {
             error_log "Lock file '${lock}' exists, but backup/restore process wid pid ${pid} is not running!." ${rvalue}
         fi
     else
-        echo ${mypid} > "${lock}" 2>/dev/null
-        rvalue=$?
-        pid=$(cat "${lock}" 2>/dev/null)
-        if [ "$?" -ne "0" ] || [ "${rvalue}" -ne "0" ] || [ "${pid}" -ne "${mypid}" ]
-        then
-            rvalue=1004
-            error_log "Something went wrong writing pid to lock file '${lock}'." ${rvalue}
-        else
-            trap "finish ${lock}" SIGINT SIGTERM SIGKILL
-            ${subcommand} "${folder}" ${args}
+        (
+            echo ${mypid} > "${lock}" 2>/dev/null
             rvalue=$?
-        fi
-        rm -f "${lock}"
+            pid=$(cat "${lock}" 2>/dev/null)
+            if [ "$?" -ne "0" ] || [ "${rvalue}" -ne "0" ] || [ "${pid}" -ne "${mypid}" ]
+            then
+                rvalue=1004
+                error_log "Something went wrong writing pid to lock file '${lock}'." ${rvalue}
+            else
+                trap "finish ${lock}" SIGINT SIGTERM SIGKILL
+                ${subcommand} "${folder}" ${args}
+                rvalue=$?
+            fi
+            rm -f "${lock}"
+            exit $rvalue
+        )
+        rvalue=$?
     fi
     if [ "${rvalue}" -eq "0" ]
     then
@@ -1193,7 +1200,7 @@ rclone_init() {
         cmd="${RCLONE} --config=${cfg} config"
         echo_log "RUN: ${cmd}"
         ${cmd} && ${RCLONE} --config=${cfg} listremotes > "${dstf}"
-        return $?
+        exit $?
     )
     return $?
 }
