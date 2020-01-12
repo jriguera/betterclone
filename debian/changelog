@@ -1,3 +1,10 @@
+betterclone (0.2.2) unstable; urgency=low
+  * New minor version
+  * Remove unneeded file
+  * Improve lock mechanism with flock
+
+ -- Jose Riguera <jriguera@gmail.com>  Sat, 11 Jan 2020 00:39:08 +0100
+
 betterclone (0.2.1) unstable; urgency=low
   * minor version bump
   * make sure snapshots_path is there
