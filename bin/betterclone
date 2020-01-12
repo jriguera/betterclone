@@ -31,7 +31,7 @@ source "${PROGRAM_CFGD}/config.env"
 # a different format
 POLICY_DATE=$(date +'%y.%m.%d-%w-%s')
 
-# Exit codes >= 1000 coming from this script
+# Exit codes >= 200 coming from this script
 
 # https://btrfs.wiki.kernel.org/index.php/UseCases
 # https://wiki.lexruee.ch/btrfs/
@@ -168,8 +168,8 @@ check_cfg() {
 
     if [ ! -r "${cfg}" ]
     then
-        error_log "Cannot read/found backup configuration file '${cfg}'" 1005
-        return 1005
+        error_log "Cannot read/found backup configuration file '${cfg}'" 205
+        return 205
     else
         echo_log "Reading backup configuration file '${cfg}' ..."
     fi
@@ -181,40 +181,40 @@ check_cfg() {
         rvalue=$?
         if [ "${rvalue}" -ne "0" ] || [ -z "${fs}" ]
         then
-            error_log "Unknown filesystem type for mountpoint ${root}" 1010
-            return 1010
+            error_log "Unknown filesystem type for mountpoint ${root}" 210
+            return 210
         fi
     fi
     if type -t "${fs}_check" > /dev/null 2>&1
     then
         if ! ${fs}_check "${root}" > /dev/null 2>&1
         then
-            error_log "${root} is not a valid ${fs} filesystem mountpoint!" 1011
-            return 1011
+            error_log "${root} is not a valid ${fs} filesystem mountpoint!" 211
+            return 211
         fi
     else
-        error_log "${root} filesystem ${fs} is not supported by this program!" 1012
-        return 1012
+        error_log "${root} filesystem ${fs} is not supported by this program!" 212
+        return 212
     fi
     snapshots_path=$(read_cfg_param "${cfg}" SNAPSHOTS_PATH)
     rvalue=$?
     if [ "${rvalue}" -ne "0" ] || [ -z "${snapshots_path}" ]
     then
-        error_log "SNAPSHOTS_PATH not defined in configuration file '${cfg}'" 1006
-        return 1006
+        error_log "SNAPSHOTS_PATH not defined in configuration file '${cfg}'" 206
+        return 206
     fi
     p=$(read_cfg_param "${cfg}" BACKUPS_DST)
     rvalue=$?
     if [ "${rvalue}" -ne "0" ] || [ -z "${p}" ]
     then
-        error_log "BACKUPS_DST not defined in configuration file '${cfg}'" 1006
-        return 1006
+        error_log "BACKUPS_DST not defined in configuration file '${cfg}'" 206
+        return 206
     fi
     p=$(read_cfg_param "${cfg}" BACKUPS_TOOL)
     if [ "${rvalue}" -ne "0" ] || [ -z "${p}" ]
     then
-        error_log "BACKUPS_TOOL not defined in configuration file '${cfg}'" 1006
-        return 1006
+        error_log "BACKUPS_TOOL not defined in configuration file '${cfg}'" 206
+        return 206
     fi
     mkdir -p "${snapshots_path}"
     return 0
@@ -237,19 +237,19 @@ manage_init() {
     rvalue=$?
     if [ "${rvalue}" -ne "0" ] || [ -z "${fs}" ]
     then
-        error_log "Unknown filesystem type for mountpoint ${root}" 1010
-        return 1010
+        error_log "Unknown filesystem type for mountpoint ${root}" 210
+        return 210
     else
         if type -t "${fs}_check" > /dev/null 2>&1
         then
             if ! ${fs}_check "${root}" > /dev/null 2>&1
             then
-                error_log "${root} is not a valid ${fs} filesystem mountpoint!" 1011
-                return 1011
+                error_log "${root} is not a valid ${fs} filesystem mountpoint!" 211
+                return 211
             fi
         else
-            error_log "${root} filesystem ${fs} is not supported by this program!" 1012
-            return 1012
+            error_log "${root} filesystem ${fs} is not supported by this program!" 212
+            return 212
         fi
     fi
     echo_log "Performing ${tool} configuration in ${tool_cfg} ... "
@@ -258,8 +258,8 @@ manage_init() {
     rm -f "${backup_dst_file}"
     if [ -z "${backup_dst}" ]
     then
-        error_log "No ${tool} remote for backup destination defined!" 1007
-        return 1007
+        error_log "No ${tool} remote for backup destination defined!" 207
+        return 207
     else
         echo_log "Getting first ${tool} remote for backup destination: '${backup_dst}'"
     fi
@@ -561,8 +561,8 @@ cleanup_snapshots() {
             then
                 snapshots_delete="${snapshots_delete} ${output}"
             else
-                error_log "Snapshot '${snapshot_name}' in ${snapshot_path} not found!" 1101
-                return 1101
+                error_log "Snapshot '${snapshot_name}' in ${snapshot_path} not found!" 221
+                return 221
             fi
         done
     fi
@@ -621,8 +621,8 @@ snapshot_backup() {
         index=$(echo "${snapshot_name}" | awk '{ split($1,a,"#"); print a[2] }')
         if [ -z "${index}" ]
         then
-            error_log "Latest created snapshot '${snapshot_name} not found!" 1100
-            return 1100
+            error_log "Latest created snapshot '${snapshot_name} not found!" 220
+            return 220
         fi
         if [ "${index}" -ne "1" ]
         then
@@ -641,8 +641,8 @@ snapshot_backup() {
     fi
     if [ ! -d "${snapshot_full_path}" ]
     then
-        error_log "Snapshot on path '${snapshot_full_path}' not available!" 1102
-        return 1102
+        error_log "Snapshot on path '${snapshot_full_path}' not available!" 222
+        return 222
     fi
     echo_log "Performing backup for [${fs}]${root} from snapshot '${snapshot_name}' to '[${tool}]${backups_dst}' ... "
     hook "${hook_start}" "backup" "${root}" "${snapshot_full_path}" "${backups_dst}"
@@ -918,15 +918,15 @@ backup_restore() {
         backup_name=$(echo "${backup_list}" | awk '{ if (NR == 1) print $1 }')
         if [ -z "${backup_name}" ]
         then
-            error_log "No remote backups have been found for on '[${tool}]${backups_dst}'!" 2003
-            return 2003
+            error_log "No remote backups have been found for on '[${tool}]${backups_dst}'!" 233
+            return 233
         fi
     else
         backup_name=$(echo "${backup_list}" | awk -v s="${restore_name}" '{ if ($1 ~ s) print $1 }')
         if [ -z "${backup_name}" ]
         then
-            error_log "No backups matching '${restore_name}' found on '[${tool}]${backups_dst}'!" 2003
-            return 2003
+            error_log "No backups matching '${restore_name}' found on '[${tool}]${backups_dst}'!" 233
+            return 233
         fi
     fi
     echo_log "Performing restoring on ${root} from '${restore_name}' backup '[${tool}]${backups_dst}/${backup_name}' ..."
@@ -996,15 +996,15 @@ snapshot_restore() {
         snapshot_name=$(echo "${snapshots}" | awk '{ if (NR == 1) print $1 }')
         if [ -z "${snapshot_name}" ]
         then
-            echo_log "No snapshots matching '${restore_name}' found on ${snapshot_path}!" 2002
-            return 2002
+            echo_log "No snapshots matching '${restore_name}' found on ${snapshot_path}!" 222
+            return 222
         fi
     else
         snapshot_name=$(echo "${snapshots}" | awk -v s="${restore_name}" '{ if ($1 ~ s) print $1 }')
         if [ -z "${snapshot_name}" ]
         then
-            error_log "Snapshot '${restore_name}' not found in ${snapshot_path}!" 2002
-            return 2002
+            error_log "Snapshot '${restore_name}' not found in ${snapshot_path}!" 222
+            return 222
         fi
     fi
     snapshot_dir="${snapshot_path}/${snapshot_name}"
@@ -1065,8 +1065,8 @@ manage_restore() {
 
     if [ ! -r "${restore_ctl}" ]
     then
-        error_log "Restore control file '${restore_ctl}' not found!" 2000
-        return 2000
+        error_log "Restore control file '${restore_ctl}' not found!" 240
+        return 240
     else
         restore_name=$(cat ${restore_ctl} | awk '{ if (NR == 1) print $1 }')
         grep -qi "snapshot" ${restore_ctl} && from="snapshot"
@@ -1078,8 +1078,8 @@ manage_restore() {
     fi
     if [ -z "${restore_name}" ]
     then
-        error_log "Restore control file '${restore_ctl}' empty?" 2001
-        return 2001
+        error_log "Restore control file '${restore_ctl}' empty?" 241
+        return 241
     fi
     if [ "${from}" == "any" ] || [ "${from}" == "snapshot" ]
     then
@@ -1133,27 +1133,30 @@ run() {
 
     if [ ! -d "${folder}" ]
     then
-        error_log "Mountpoint to operate not found or specified!" 1000
-        return 1000
+        error_log "Mountpoint to operate not found or specified!" 200
+        return 200
     fi
     if [ "$(id -u)" != "0" ]
     then
-        error_log "Program not running as root" 1001
-        return 1001
+        error_log "Program not running as root" 201
+        return 201
     fi
-
     # Set lock and write pid to it
-    exec 222<>"${lock}"
+    if ! exec 222<>"${lock}"
+    then
+        error_log "Cannot create lock file ${lock}." 208
+        return 208
+    fi
     if ! flock -n -x 222
     then
         echo_log "Wait, wait ... It seems there is a lock file '${lock}'. Checking ..."
         pid=$(cat "${lock}")
         if ps -p ${pid} > /dev/null 2>&1
         then
-            rvalue=1002
+            rvalue=202
             error_log "There is a backup/restore process still running on '${folder}' with pid ${pid}." ${rvalue}
         else
-            rvalue=1003
+            rvalue=203
             error_log "Lock file '${lock}' exists, but backup/restore process wid pid ${pid} is not running!." ${rvalue}
         fi
     else
@@ -1163,7 +1166,7 @@ run() {
             pid=$(cat "${lock}" 2>/dev/null)
             if [ "$?" -ne "0" ] || [ "${rvalue}" -ne "0" ] || [ "${pid}" -ne "${mypid}" ]
             then
-                rvalue=1004
+                rvalue=204
                 error_log "Something went wrong writing pid to lock file '${lock}'." ${rvalue}
             else
                 trap "finish ${lock}" SIGINT SIGTERM SIGKILL
